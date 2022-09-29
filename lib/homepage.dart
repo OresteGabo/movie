@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:movie_app/widgets/trending.dart';
 import 'package:tmdb_api/tmdb_api.dart';
 
 void main() {
@@ -40,6 +41,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   loadmovies() async {
     TMDB tmdbWithCustomLogs = TMDB(
+      defaultLanguage: 'fr',
       ApiKeys(apikey, readaccesstoken),
       logConfig: const ConfigLogger(
         showLogs: true,
@@ -48,11 +50,11 @@ class _MyHomePageState extends State<MyHomePage> {
     );
 
     Map trendingresult = await tmdbWithCustomLogs.v3.trending.getTrending();
-    print((trendingresult));
+
     setState(() {
       trendingmovies = trendingresult['results'];
 
-      //Au cas ou l'API nous donne un tableau de plus de 10 films, on reduis la liste à 10
+      ///Au cas ou l'API nous donne un tableau de plus de 10 films, on reduis la liste à 10
       if (trendingmovies.length > 10) {
         trendingmovies.removeRange(10, trendingmovies.length);
       }
@@ -62,9 +64,10 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text(widget.title),
-        ),
-        body: Text("Empty page"));
+      appBar: AppBar(
+        title: Text(widget.title),
+      ),
+      body: TrendingMovies(trending: trendingmovies),
+    );
   }
 }
