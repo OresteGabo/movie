@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:movie_app/widgets/description.dart';
 
 class TrendingMovies extends StatelessWidget {
   ///trending is a list of trending movies provided by the API
@@ -17,6 +18,14 @@ class TrendingMovies extends StatelessWidget {
           return InkWell(
             onTap: () {
               ///TODO By clicking on the movie, it should pop up with more description
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => Description(
+                    movieData: trending[index],
+                  ),
+                ),
+              );
             },
             child: Column(
               children: [
@@ -31,29 +40,41 @@ class TrendingMovies extends StatelessWidget {
                           Image.network(
                             'https://image.tmdb.org/t/p/w500${trending[index]['poster_path']}',
                           ),
+                          const SizedBox(
+                            width: 6,
+                          ),
                           Container(
-                            padding: const EdgeInsets.all(6),
+                            padding: const EdgeInsets.only(top: 8),
 
-                            ///This will help us to resize this container, so that text inside will kbow the right boundary
-                            width: width - 100,
+                            ///(Screen size - 100) This will help us to resize this container,
+                            ///so that text inside will know the right boundary
+                            width: width - 110,
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 ///For some reason, some titles are null, and must be treated to not cause the app to crush
                                 Text(
                                   trending[index]['title'] ??
-                                      'Title not provided',
+                                      (trending[index]['name'] ??
+                                          'Title not provided'),
                                   style: const TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold),
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 1,
                                 ),
+
+                                ///TODO the release date must be changed in french
                                 Text(
                                   ///TODO Reformatting date in french
                                   trending[index]['release_date'] == null
                                       ? 'release date not provided'
                                       : DateFormat('dd MMMM yyyy')
-                                          .format(DateTime.parse(
-                                              trending[index]['release_date']))
+                                          .format(
+                                            DateTime.parse(
+                                              trending[index]['release_date'],
+                                            ),
+                                          )
                                           .toString(),
 
                                   style: const TextStyle(color: Colors.grey),
@@ -67,6 +88,9 @@ class TrendingMovies extends StatelessWidget {
                                   style: const TextStyle(
                                     fontSize: 16,
                                   ),
+                                ),
+                                const SizedBox(
+                                  height: 6,
                                 ),
                               ],
                             ),
