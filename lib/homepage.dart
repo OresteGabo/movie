@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:movie_app/widgets/trending.dart';
 import 'package:tmdb_api/tmdb_api.dart';
+import 'dart:convert';
 
 void main() {
   runApp(const MyApp());
@@ -39,6 +40,7 @@ class _MyHomePageState extends State<MyHomePage> {
     loadmovies();
   }
 
+  var genres;
   loadmovies() async {
     TMDB tmdbWithCustomLogs = TMDB(
       defaultLanguage: 'fr',
@@ -51,6 +53,13 @@ class _MyHomePageState extends State<MyHomePage> {
 
     Map trendingresult = await tmdbWithCustomLogs.v3.trending.getTrending();
 
+    //Map trendingresult = await tmdbWithCustomLogs.v3.movies.getTopRated();
+
+    Map genresResults = await tmdbWithCustomLogs.v3.genres.getMovieList();
+    genres = genresResults['genres'] as List;
+
+    ///This function will return the genre associated to the id passed inside the parameter
+
     setState(() {
       trendingmovies = trendingresult['results'];
 
@@ -58,6 +67,8 @@ class _MyHomePageState extends State<MyHomePage> {
       if (trendingmovies.length > 10) {
         trendingmovies.removeRange(10, trendingmovies.length);
       }
+
+      print(trendingmovies[3]);
     });
   }
 
@@ -67,7 +78,10 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      body: TrendingMovies(trending: trendingmovies),
+      body: TrendingMovies(
+        genres: genres,
+        trending: trendingmovies,
+      ),
     );
   }
 }

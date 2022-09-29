@@ -3,10 +3,8 @@ import 'package:intl/intl.dart';
 
 class Description extends StatelessWidget {
   final movieData;
-  const Description({
-    super.key,
-    required this.movieData,
-  });
+  final genres;
+  const Description({super.key, required this.movieData, required this.genres});
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +48,7 @@ class Description extends StatelessWidget {
                   '${getFormattedDate(movieData['release_date'].toString())} - 1h27',
                 ),
 
-                ///TODO instead of printing the ID's, we need to print their related values
+                ///TODO some movies's ID has no matching name, ID will be displayed instead
                 Text(getMovieTypes(movieData['genre_ids']))
               ],
             ),
@@ -81,6 +79,18 @@ class Description extends StatelessWidget {
     );
   }
 
+  String getGenre(int g) {
+    for (int x = 0; x < genres.length; x++) {
+      Map m = genres[x];
+      if (m['id'] == g) {
+        return m['name'];
+      }
+    }
+
+    //in case the String pair not found, we will return the id back
+    return g.toString();
+  }
+
   static String getFormattedDate(String date) {
     try {
       return DateFormat('dd/MM/yyyy').format(DateTime.parse(date));
@@ -89,10 +99,10 @@ class Description extends StatelessWidget {
     }
   }
 
-  static String getMovieTypes(List<dynamic> list) {
+  String getMovieTypes(List<dynamic> list) {
     String str = '';
     for (int x = 0; x < list.length; x++) {
-      str += '  ${list[x]}';
+      str += '  ${getGenre(list[x])}';
     }
     return str;
   }
@@ -110,7 +120,7 @@ class Description extends StatelessWidget {
   }
 
   static String getMovieOriginalName(dynamic movieData) {
-    return movieData['original_name'] ??
+    return movieData['original_title'] ??
         (movieData['name'] ??
             (movieData['title'] ?? 'Original name not provided'));
   }
