@@ -5,10 +5,15 @@ import 'package:movie_app/widgets/description.dart';
 class TrendingMovies extends StatelessWidget {
   ///trending is a list of trending movies provided by the API
   final List trending;
-  final genres;
+  final genresMovies;
+  final genresTv;
 
-  const TrendingMovies(
-      {super.key, required this.trending, required this.genres});
+  const TrendingMovies({
+    super.key,
+    required this.trending,
+    required this.genresMovies,
+    required this.genresTv,
+  });
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
@@ -24,7 +29,8 @@ class TrendingMovies extends StatelessWidget {
                 context,
                 MaterialPageRoute(
                   builder: (context) => Description(
-                    genres: genres,
+                    genresMovies: genresMovies,
+                    genresTv: genresTv,
                     movieData: trending[index],
                   ),
                 ),

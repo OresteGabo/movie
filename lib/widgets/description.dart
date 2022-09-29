@@ -3,8 +3,14 @@ import 'package:intl/intl.dart';
 
 class Description extends StatelessWidget {
   final movieData;
-  final genres;
-  const Description({super.key, required this.movieData, required this.genres});
+  final genresMovies;
+  final genresTv;
+  const Description({
+    super.key,
+    required this.movieData,
+    required this.genresMovies,
+    required this.genresTv,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -79,9 +85,19 @@ class Description extends StatelessWidget {
     );
   }
 
+  ///This function will return the genre associated to the id passed inside the parameter
+  ///The id, can the a Tv Id or a Movie id
   String getGenre(int g) {
-    for (int x = 0; x < genres.length; x++) {
-      Map m = genres[x];
+    for (int x = 0; x < genresMovies.length; x++) {
+      Map m = genresMovies[x];
+      if (m['id'] == g) {
+        return m['name'];
+      }
+    }
+
+    ///This loop will be executed only if the ID is not found in movies
+    for (int x = 0; x < genresTv.length; x++) {
+      Map m = genresTv[x];
       if (m['id'] == g) {
         return m['name'];
       }

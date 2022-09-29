@@ -40,7 +40,9 @@ class _MyHomePageState extends State<MyHomePage> {
     loadmovies();
   }
 
-  var genres;
+  var genresMovies;
+  var genresTv;
+
   loadmovies() async {
     TMDB tmdbWithCustomLogs = TMDB(
       defaultLanguage: 'fr',
@@ -51,14 +53,14 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
     );
 
+    ///Trending result conatins movies and Tv shows, to get the genres, we need to consider both movies genres and Tv genres
     Map trendingresult = await tmdbWithCustomLogs.v3.trending.getTrending();
 
-    //Map trendingresult = await tmdbWithCustomLogs.v3.movies.getTopRated();
+    Map genresResultsMovies = await tmdbWithCustomLogs.v3.genres.getMovieList();
+    Map genresResultsTv = await tmdbWithCustomLogs.v3.genres.getTvlist();
 
-    Map genresResults = await tmdbWithCustomLogs.v3.genres.getMovieList();
-    genres = genresResults['genres'] as List;
-
-    ///This function will return the genre associated to the id passed inside the parameter
+    genresMovies = genresResultsMovies['genres'] as List;
+    genresTv = genresResultsTv['genres'] as List;
 
     setState(() {
       trendingmovies = trendingresult['results'];
@@ -67,8 +69,7 @@ class _MyHomePageState extends State<MyHomePage> {
       if (trendingmovies.length > 10) {
         trendingmovies.removeRange(10, trendingmovies.length);
       }
-
-      print(trendingmovies[2]);
+      print('');
     });
   }
 
@@ -79,7 +80,8 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
       ),
       body: TrendingMovies(
-        genres: genres,
+        genresMovies: genresMovies,
+        genresTv: genresTv,
         trending: trendingmovies,
       ),
     );
