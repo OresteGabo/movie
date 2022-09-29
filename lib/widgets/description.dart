@@ -45,7 +45,7 @@ class Description extends StatelessWidget {
               children: [
                 ///TODO Movie duration has to be fixed, and add dynamic data from the API database
                 Text(
-                  '${getFormattedDate(movieData['release_date'].toString())} - 1h27',
+                  getFormattedDate(getReleaseDate(movieData)),
                 ),
 
                 ///TODO some movies's ID has no matching name, ID will be displayed instead
@@ -89,6 +89,19 @@ class Description extends StatelessWidget {
 
     //in case the String pair not found, we will return the id back
     return g.toString();
+  }
+
+  ///This function return the release_date, or the first_air_date or empty
+  static String getReleaseDate(dynamic movieData) {
+    if (movieData['release_date'] == null) {
+      if (movieData['first_air_date'] == null) {
+      } else {
+        return movieData['first_air_date'].toString();
+      }
+    } else {
+      return movieData['release_date'].toString();
+    }
+    return '';
   }
 
   static String getFormattedDate(String date) {
