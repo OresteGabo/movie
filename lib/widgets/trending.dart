@@ -71,7 +71,17 @@ class TrendingMovies extends StatelessWidget {
                                 Text(
                                   ///TODO Reformatting date in french
                                   trending[index]['release_date'] == null
-                                      ? 'release date not provided'
+                                      ? (trending[index]['first_air_date'] ==
+                                              null
+                                          ? 'release date not provided'
+                                          : DateFormat('dd MMMM yyyy')
+                                              .format(
+                                                DateTime.parse(
+                                                  trending[index]
+                                                      ['first_air_date'],
+                                                ),
+                                              )
+                                              .toString())
                                       : DateFormat('dd MMMM yyyy')
                                           .format(
                                             DateTime.parse(
