@@ -68,7 +68,7 @@ class _MyHomePageState extends State<MyHomePage> {
         trendingmovies.removeRange(10, trendingmovies.length);
       }
 
-      print(trendingmovies[3]);
+      print(trendingmovies[2]);
     });
   }
 
