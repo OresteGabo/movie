@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:movie_app/widgets/trending.dart';
 import 'package:tmdb_api/tmdb_api.dart';
-import 'dart:convert';
 
 void main() {
   runApp(const MyApp());
@@ -37,13 +36,12 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    loadmovies();
+    loadMovies();
   }
 
   var genresMovies;
-  var genresTv;
 
-  loadmovies() async {
+  loadMovies() async {
     TMDB tmdbWithCustomLogs = TMDB(
       defaultLanguage: 'fr',
       ApiKeys(apikey, readaccesstoken),
@@ -53,23 +51,45 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
     );
 
-    ///Trending result conatins movies and Tv shows, to get the genres, we need to consider both movies genres and Tv genres
-    Map trendingresult = await tmdbWithCustomLogs.v3.trending.getTrending();
+    /*
+      Trending has a mediaType set to all (MediaType.all), i teams the data may concerns Tv shows, and or movies and persons
 
+
+      in our case, we will only need movies [Madiatype.movie] and tv shows [MediaType.tv], by precising it in the parameter to avoid the MediaType.person from being returned
+      to get the genres, we need to consider both genres from both sources
+      getTrending() has language 'fr', from the default language set in TMDB
+      TMDB object created above in loadMovies function[tmdbWithCustomLogs]
+    */
+
+    Map trendingresult = await tmdbWithCustomLogs.v3.trending
+        .getTrending(mediaType: MediaType.movie);
+
+    /// Getting the genres of when MediaType is movie
+    /// It returns an Associative table (Map) named genres, with id and its associated name
+    /// sample example of the returned table
+    /// {
+    ///    "genres":[
+    ///       {
+    ///          "id":28,
+    ///          "name":"Action"
+    ///       },
+    ///       {
+    ///          "id":12,
+    ///          "name":"Aventure"
+    ///       }
+    ///    ]
+    /// }
     Map genresResultsMovies = await tmdbWithCustomLogs.v3.genres.getMovieList();
-    Map genresResultsTv = await tmdbWithCustomLogs.v3.genres.getTvlist();
 
     genresMovies = genresResultsMovies['genres'] as List;
-    genresTv = genresResultsTv['genres'] as List;
 
     setState(() {
       trendingmovies = trendingresult['results'];
 
-      ///Au cas ou l'API nous donne un tableau de plus de 10 films, on reduis la liste à 10
+      ///API may return a very big list of Movies, we this will help to reduce and only keep the first 10
       if (trendingmovies.length > 10) {
         trendingmovies.removeRange(10, trendingmovies.length);
       }
-      print('');
     });
   }
 
@@ -81,7 +101,6 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: TrendingMovies(
         genresMovies: genresMovies,
-        genresTv: genresTv,
         trending: trendingmovies,
       ),
     );
