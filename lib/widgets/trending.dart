@@ -74,26 +74,17 @@ class TrendingMovies extends StatelessWidget {
 
                                 ///TODO the release date must be changed in french
                                 Text(
-                                  ///TODO Reformatting date in french
                                   trending[index]['release_date'] == null
                                       ? (trending[index]['first_air_date'] ==
                                               null
-                                          ? 'release date not provided'
-                                          : DateFormat('dd MMMM yyyy')
-                                              .format(
-                                                DateTime.parse(
-                                                  trending[index]
-                                                      ['first_air_date'],
-                                                ),
-                                              )
-                                              .toString())
-                                      : DateFormat('dd MMMM yyyy')
-                                          .format(
-                                            DateTime.parse(
-                                              trending[index]['release_date'],
-                                            ),
-                                          )
-                                          .toString(),
+                                          ? '###'
+                                          : getFrenchDate(DateTime.parse(
+                                              trending[index]
+                                                  ['first_air_date'])))
+                                      : getFrenchDate(DateTime.parse(
+                                          trending[index]['release_date'])),
+
+                                  ///TODO Reformatting date in french
 
                                   style: const TextStyle(color: Colors.grey),
                                 ),
@@ -122,5 +113,84 @@ class TrendingMovies extends StatelessWidget {
             ),
           );
         });
+  }
+
+  /// Get a date of the form '23 Juillet 2022' , in french from [date]
+  static String getFrenchDate(DateTime date) {
+    return '${date.day} ${getFrenchMonth(date.month)}  ${date.year}';
+  }
+
+  /// Get a month in french from integer month (1 ... 12 => janvier ... Decembre) from [month]
+  static String getFrenchMonth(int month) {
+    String frM = '';
+
+    switch (month) {
+      case 1:
+        {
+          frM = 'Janvier';
+        }
+        break;
+      case 2:
+        {
+          frM = 'Février';
+        }
+        break;
+      case 3:
+        {
+          frM = 'Mars';
+        }
+        break;
+      case 4:
+        {
+          frM = 'Avril';
+        }
+        break;
+      case 5:
+        {
+          frM = 'Mai';
+        }
+        break;
+      case 6:
+        {
+          frM = 'Juin';
+        }
+        break;
+      case 7:
+        {
+          frM = 'Juillet';
+        }
+        break;
+      case 8:
+        {
+          frM = 'Août';
+        }
+        break;
+      case 9:
+        {
+          frM = 'Septembre';
+        }
+        break;
+      case 10:
+        {
+          frM = 'Octobre';
+        }
+        break;
+      case 11:
+        {
+          frM = 'Novembre';
+        }
+        break;
+      case 12:
+        {
+          frM = 'Decembre';
+        }
+        break;
+      default:
+        {
+          frM = '___';
+        }
+        break;
+    }
+    return frM;
   }
 }
