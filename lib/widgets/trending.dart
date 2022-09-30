@@ -4,15 +4,16 @@ import 'package:movie_app/widgets/description.dart';
 
 class TrendingMovies extends StatelessWidget {
   ///trending is a list of trending movies provided by the API
+  ///This list has in it items of different MediaType ,
+  ///for more on MediaType https://pub.dev/documentation/tmdb_api/latest/tmdb_api/MediaType.html
   final List trending;
+
   final genresMovies;
-  final genresTv;
 
   const TrendingMovies({
     super.key,
     required this.trending,
     required this.genresMovies,
-    required this.genresTv,
   });
   @override
   Widget build(BuildContext context) {
@@ -30,7 +31,6 @@ class TrendingMovies extends StatelessWidget {
                 MaterialPageRoute(
                   builder: (context) => Description(
                     genresMovies: genresMovies,
-                    genresTv: genresTv,
                     movieData: trending[index],
                   ),
                 ),
@@ -64,8 +64,7 @@ class TrendingMovies extends StatelessWidget {
                                 ///For some reason, some titles are null, and must be treated to not cause the app to crush
                                 Text(
                                   trending[index]['title'] ??
-                                      (trending[index]['name'] ??
-                                          'Title not provided'),
+                                      'Title not provided',
                                   style: const TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold),

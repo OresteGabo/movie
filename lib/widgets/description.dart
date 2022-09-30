@@ -4,12 +4,10 @@ import 'package:intl/intl.dart';
 class Description extends StatelessWidget {
   final movieData;
   final genresMovies;
-  final genresTv;
   const Description({
     super.key,
     required this.movieData,
     required this.genresMovies,
-    required this.genresTv,
   });
 
   @override
@@ -51,7 +49,7 @@ class Description extends StatelessWidget {
               children: [
                 ///TODO Movie duration has to be fixed, and add dynamic data from the API database
                 Text(
-                  getFormattedDate(getReleaseDate(movieData)),
+                  '${getFormattedDate(getReleaseDate(movieData))}   -   ${movieData['runtime'] == null ? '\tNO RUNTIME' : displayTime(34)}',
                 ),
 
                 ///TODO some movies's ID has no matching name, ID will be displayed instead
@@ -75,7 +73,6 @@ class Description extends StatelessWidget {
                 const SizedBox(
                   height: 24,
                 ),
-                //Text(overview),
                 Text(movieData['overview'])
               ],
             ),
@@ -90,14 +87,6 @@ class Description extends StatelessWidget {
   String getGenre(int g) {
     for (int x = 0; x < genresMovies.length; x++) {
       Map m = genresMovies[x];
-      if (m['id'] == g) {
-        return m['name'];
-      }
-    }
-
-    ///This loop will be executed only if the ID is not found in movies
-    for (int x = 0; x < genresTv.length; x++) {
-      Map m = genresTv[x];
       if (m['id'] == g) {
         return m['name'];
       }
@@ -120,6 +109,9 @@ class Description extends StatelessWidget {
     return '';
   }
 
+  /// Returns a formatted date String from [date].
+  ///
+  /// Throws a [FormatException] if the [date] can not be converted, or not a valid date data
   static String getFormattedDate(String date) {
     try {
       return DateFormat('dd/MM/yyyy').format(DateTime.parse(date));
@@ -138,19 +130,32 @@ class Description extends StatelessWidget {
 
   static String getMovieTitle(dynamic movieData) {
     return movieData['title'] ??
-        (movieData['name'] ??
-            (movieData['original_name'] ?? 'Title not provided'));
+        // (movieData['name'] ??
+        (movieData['original_name'] ?? 'Title not provided');
   }
 
+/*
   static String getMovieName(dynamic movieData) {
     return movieData['name'] ??
         (movieData['original_name'] ??
             (movieData['title'] ?? 'Name not provided'));
   }
-
+*/
   static String getMovieOriginalName(dynamic movieData) {
     return movieData['original_title'] ??
         (movieData['name'] ??
             (movieData['title'] ?? 'Original name not provided'));
+  }
+
+  static int getHours(int minutes) {
+    return (minutes / 60).floor();
+  }
+
+  static int getMinutes(int minutes) {
+    return minutes % 60;
+  }
+
+  static String displayTime(int minutes) {
+    return '${getHours(minutes)} h ${getMinutes(minutes)}';
   }
 }
