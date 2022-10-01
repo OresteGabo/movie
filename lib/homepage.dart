@@ -90,6 +90,10 @@ class _MyHomePageState extends State<MyHomePage> {
       if (trendingmovies.length > 10) {
         trendingmovies.removeRange(10, trendingmovies.length);
       }
+      for (int x = 0; x < 10; x++) {
+        print(
+            'id:\'${trendingresult['results'][x]['id']}\'  title :\'${trendingresult['results'][x]['title']}\' \n ');
+      }
     });
   }
 
