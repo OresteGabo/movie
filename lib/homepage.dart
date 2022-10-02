@@ -14,7 +14,6 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'The movie app',
       home: MyHomePage(title: 'The movie app'),
     );
   }
@@ -29,7 +28,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  List trendingmovies = [];
+  List movies = [];
 
   @override
   void initState() {
@@ -82,13 +81,13 @@ class _MyHomePageState extends State<MyHomePage> {
     genresMovies = genresResultsMovies['genres'] as List;
 
     setState(() {
-      trendingmovies = trendingresult['results'];
+      movies = trendingresult['results'];
     });
 
     ///API may return a very big list of Movies, we this will help to reduce and only keep the first 10
-    if (trendingmovies.length > 10) {
+    if (movies.length > 10) {
       setState(() {
-        trendingmovies.removeRange(10, trendingmovies.length);
+        movies.removeRange(10, movies.length);
       });
     }
   }
@@ -96,12 +95,9 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
       body: TrendingMovies(
         genresMovies: genresMovies,
-        trending: trendingmovies,
+        movies: movies,
       ),
     );
   }
