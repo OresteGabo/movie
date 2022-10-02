@@ -4,17 +4,18 @@ A new Flutter project.
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+This project is a was made in flutter using TMDB Api.
 
-A few resources to get you started if this is your first Flutter project:
+A few resources and reference used:
 
 - [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
 - [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+- [Movies: Trending movies](https://developers.themoviedb.org/3/trending/get-trending)
+- [Detailes: Movie details](https://developers.themoviedb.org/3/movies/get-movie-details)
+- [Support: Online TMDB forum support](https://www.themoviedb.org/talk/category/5047958519c29526b50017d6)
 
 For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
-# movie
+[online documentation](https://docs.flutter.dev/), and the TMDB Api [TMDB Online documentation](https://developers.themoviedb.org/4/getting-started/authorization), and the Flutter and dart package on [TMDB Flutter and dart package](https://pub.dev/packages/tmdb_api)
 
 
 ## Home page
