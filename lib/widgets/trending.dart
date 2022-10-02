@@ -24,7 +24,6 @@ class TrendingMovies extends StatelessWidget {
         itemBuilder: (context, index) {
           return InkWell(
             onTap: () {
-              ///TODO By clicking on the movie, it should pop up with more description
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -71,20 +70,11 @@ class TrendingMovies extends StatelessWidget {
                                   maxLines: 1,
                                 ),
 
-                                ///TODO the release date must be changed in french
                                 Text(
-                                  trending[index]['release_date'] == null
-                                      ? (trending[index]['first_air_date'] ==
-                                              null
-                                          ? '###'
-                                          : getFrenchDate(DateTime.parse(
-                                              trending[index]
-                                                  ['first_air_date'])))
-                                      : getFrenchDate(DateTime.parse(
-                                          trending[index]['release_date'])),
-
-                                  ///TODO Reformatting date in french
-
+                                  getFrenchDate(
+                                    DateTime.parse(
+                                        trending[index]['release_date']),
+                                  ),
                                   style: const TextStyle(color: Colors.grey),
                                 ),
                                 const Spacer(),
