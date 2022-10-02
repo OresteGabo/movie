@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:movie_app/widgets/trending.dart';
 import 'package:tmdb_api/tmdb_api.dart';
+import 'package:movie_app/model/app_vars.dart';
 
 void main() {
   runApp(const MyApp());
@@ -29,9 +30,6 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   List trendingmovies = [];
-  final String apikey = '04b719344104246bab9a7ee925a950ac';
-  final String readaccesstoken =
-      'eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIwNGI3MTkzNDQxMDQyNDZiYWI5YTdlZTkyNWE5NTBhYyIsInN1YiI6IjYzMzM3YTE2NjA4MmViMDA4ODNlM2NlYyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.gcSE4SYndJ4cbpQWW9QMWbKJ80Ij0MNkr8XTsMPp5IY';
 
   @override
   void initState() {
@@ -39,7 +37,7 @@ class _MyHomePageState extends State<MyHomePage> {
     loadMovies();
   }
 
-  var genresMovies;
+  List genresMovies = [];
 
   loadMovies() async {
     TMDB tmdbWithCustomLogs = TMDB(
