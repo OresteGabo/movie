@@ -1,15 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:tmdb_api/tmdb_api.dart';
 
-class Description extends StatelessWidget {
+const String apikey = '04b719344104246bab9a7ee925a950ac';
+const String readaccesstoken =
+    'eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIwNGI3MTkzNDQxMDQyNDZiYWI5YTdlZTkyNWE5NTBhYyIsInN1YiI6IjYzMzM3YTE2NjA4MmViMDA4ODNlM2NlYyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.gcSE4SYndJ4cbpQWW9QMWbKJ80Ij0MNkr8XTsMPp5IY';
+
+class MovieDetails extends StatefulWidget {
   final movieData;
   final genresMovies;
-  const Description({
+  const MovieDetails({
     super.key,
     required this.movieData,
     required this.genresMovies,
   });
 
+  @override
+  State<MovieDetails> createState() => _MovieDetailsState();
+}
+
+class _MovieDetailsState extends State<MovieDetails> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,14 +33,14 @@ class Description extends StatelessWidget {
                 height: 20,
               ),
               Text(
-                getMovieTitle(movieData),
+                getMovieTitle(widget.movieData),
                 style: const TextStyle(fontWeight: FontWeight.bold),
               ),
               const SizedBox(
                 height: 12,
               ),
               Image.network(
-                'https://image.tmdb.org/t/p/w500${movieData['poster_path']}',
+                'https://image.tmdb.org/t/p/w500${widget.movieData['poster_path']}',
                 width: 130,
               ),
             ],
@@ -49,11 +59,11 @@ class Description extends StatelessWidget {
               children: [
                 ///TODO Movie duration has to be fixed, and add dynamic data from the API database
                 Text(
-                  '${getFormattedDate(getReleaseDate(movieData))}   -   ${movieData['runtime'] == null ? '\tNO RUNTIME' : displayTime(34)}',
+                  '${getFormattedDate(getReleaseDate(widget.movieData))}   -  ${getTime(runtime)}',
                 ),
 
                 ///TODO some movies's ID has no matching name, ID will be displayed instead
-                Text(getMovieTypes(movieData['genre_ids']))
+                Text(getMovieTypes(widget.movieData['genre_ids']))
               ],
             ),
           ),
@@ -66,14 +76,15 @@ class Description extends StatelessWidget {
               children: [
                 Text(
                   ///TODO this is neither a title, nor the original name, i still have to figure out what is is
-                  getMovieOriginalName(movieData),
+                  //getMovieOriginalName(widget.movieData),
+                  tagline,
                   style: const TextStyle(
                       fontWeight: FontWeight.bold, fontSize: 18),
                 ),
                 const SizedBox(
                   height: 24,
                 ),
-                Text(movieData['overview'])
+                Text(widget.movieData['overview'])
               ],
             ),
           ),
@@ -82,11 +93,42 @@ class Description extends StatelessWidget {
     );
   }
 
+  int runtime = 0;
+  String tagline = '';
+  int hours = 0;
+  int minutes = 0;
+  // String displayTime="$hours h $minutes min";
+
+  void getMissingData() async {
+    TMDB tmdbWithCustomLogs = TMDB(
+      defaultLanguage: 'fr',
+      ApiKeys(apikey, readaccesstoken),
+      logConfig: const ConfigLogger(
+        showLogs: true,
+        showErrorLogs: true,
+      ),
+    );
+    Map data =
+        await tmdbWithCustomLogs.v3.movies.getDetails(widget.movieData['id']);
+    setState(() {
+      runtime = data['runtime'];
+      tagline = data['tagline'];
+      hours = getHours(runtime);
+      minutes = getMinutes(runtime);
+    });
+  }
+
+  @override
+  void initState() {
+    getMissingData();
+    super.initState();
+  }
+
   ///This function will return the genre associated to the id passed inside the parameter
   ///The id, can the a Tv Id or a Movie id
   String getGenre(int g) {
-    for (int x = 0; x < genresMovies.length; x++) {
-      Map m = genresMovies[x];
+    for (int x = 0; x < widget.genresMovies.length; x++) {
+      Map m = widget.genresMovies[x];
       if (m['id'] == g) {
         return m['name'];
       }
@@ -130,32 +172,19 @@ class Description extends StatelessWidget {
 
   static String getMovieTitle(dynamic movieData) {
     return movieData['title'] ??
-        // (movieData['name'] ??
         (movieData['original_name'] ?? 'Title not provided');
   }
 
-/*
-  static String getMovieName(dynamic movieData) {
-    return movieData['name'] ??
-        (movieData['original_name'] ??
-            (movieData['title'] ?? 'Name not provided'));
-  }
-*/
-  static String getMovieOriginalName(dynamic movieData) {
-    return movieData['original_title'] ??
-        (movieData['name'] ??
-            (movieData['title'] ?? 'Original name not provided'));
+  static int getHours(int m) {
+    return (m / 60).floor();
   }
 
-  static int getHours(int minutes) {
-    return (minutes / 60).floor();
+  static int getMinutes(int m) {
+    int minn = m % 60;
+    return m % 60;
   }
 
-  static int getMinutes(int minutes) {
-    return minutes % 60;
-  }
-
-  static String displayTime(int minutes) {
-    return '${getHours(minutes)} h ${getMinutes(minutes)}';
+  static String getTime(int m) {
+    return '${getHours(m)} h ${getMinutes(m)}';
   }
 }

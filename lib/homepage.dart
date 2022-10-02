@@ -85,16 +85,14 @@ class _MyHomePageState extends State<MyHomePage> {
 
     setState(() {
       trendingmovies = trendingresult['results'];
-
-      ///API may return a very big list of Movies, we this will help to reduce and only keep the first 10
-      if (trendingmovies.length > 10) {
-        trendingmovies.removeRange(10, trendingmovies.length);
-      }
-      for (int x = 0; x < 10; x++) {
-        print(
-            'id:\'${trendingresult['results'][x]['id']}\'  title :\'${trendingresult['results'][x]['title']}\' \n ');
-      }
     });
+
+    ///API may return a very big list of Movies, we this will help to reduce and only keep the first 10
+    if (trendingmovies.length > 10) {
+      setState(() {
+        trendingmovies.removeRange(10, trendingmovies.length);
+      });
+    }
   }
 
   @override

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:movie_app/widgets/description.dart';
 
 class TrendingMovies extends StatelessWidget {
@@ -29,7 +28,7 @@ class TrendingMovies extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => Description(
+                  builder: (context) => MovieDetails(
                     genresMovies: genresMovies,
                     movieData: trending[index],
                   ),
