@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:tmdb_api/tmdb_api.dart';
 import 'package:movie_app/model/app_vars.dart';
 
 const String apikey = '04b719344104246bab9a7ee925a950ac';
@@ -8,8 +7,8 @@ const String readaccesstoken =
     'eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIwNGI3MTkzNDQxMDQyNDZiYWI5YTdlZTkyNWE5NTBhYyIsInN1YiI6IjYzMzM3YTE2NjA4MmViMDA4ODNlM2NlYyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.gcSE4SYndJ4cbpQWW9QMWbKJ80Ij0MNkr8XTsMPp5IY';
 
 class MovieDetails extends StatefulWidget {
-  final movieData;
-  final genresMovies;
+  final Map movieData;
+  final List genresMovies;
   const MovieDetails({
     super.key,
     required this.movieData,
@@ -172,7 +171,6 @@ class _MovieDetailsState extends State<MovieDetails> {
   }
 
   static int getMinutes(int m) {
-    int minn = m % 60;
     return m % 60;
   }
 
