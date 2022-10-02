@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:tmdb_api/tmdb_api.dart';
+import 'package:movie_app/model/app_vars.dart';
 
 const String apikey = '04b719344104246bab9a7ee925a950ac';
 const String readaccesstoken =
@@ -20,6 +21,28 @@ class MovieDetails extends StatefulWidget {
 }
 
 class _MovieDetailsState extends State<MovieDetails> {
+  int runtime = 0;
+  String tagline = '';
+  int hours = 0;
+  int minutes = 0;
+
+  void getMissingData() async {
+    Map data =
+        await tmdbWithCustomLogs.v3.movies.getDetails(widget.movieData['id']);
+    setState(() {
+      runtime = data['runtime'];
+      tagline = data['tagline'];
+      hours = getHours(runtime);
+      minutes = getMinutes(runtime);
+    });
+  }
+
+  @override
+  void initState() {
+    getMissingData();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -91,37 +114,6 @@ class _MovieDetailsState extends State<MovieDetails> {
         ],
       ),
     );
-  }
-
-  int runtime = 0;
-  String tagline = '';
-  int hours = 0;
-  int minutes = 0;
-  // String displayTime="$hours h $minutes min";
-
-  void getMissingData() async {
-    TMDB tmdbWithCustomLogs = TMDB(
-      defaultLanguage: 'fr',
-      ApiKeys(apikey, readaccesstoken),
-      logConfig: const ConfigLogger(
-        showLogs: true,
-        showErrorLogs: true,
-      ),
-    );
-    Map data =
-        await tmdbWithCustomLogs.v3.movies.getDetails(widget.movieData['id']);
-    setState(() {
-      runtime = data['runtime'];
-      tagline = data['tagline'];
-      hours = getHours(runtime);
-      minutes = getMinutes(runtime);
-    });
-  }
-
-  @override
-  void initState() {
-    getMissingData();
-    super.initState();
   }
 
   ///This function will return the genre associated to the id passed inside the parameter
