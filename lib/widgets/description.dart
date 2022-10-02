@@ -79,12 +79,9 @@ class _MovieDetailsState extends State<MovieDetails> {
             ),
             child: Column(
               children: [
-                ///TODO Movie duration has to be fixed, and add dynamic data from the API database
                 Text(
-                  '${getFormattedDate(getReleaseDate(widget.movieData))}   -  ${getTime(runtime)}',
+                  '${getFormattedDate(widget.movieData['release_date'])}   -  ${getTime(runtime)}',
                 ),
-
-                ///TODO some movies's ID has no matching name, ID will be displayed instead
                 Text(getMovieTypes(widget.movieData['genre_ids']))
               ],
             ),
@@ -97,8 +94,6 @@ class _MovieDetailsState extends State<MovieDetails> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  ///TODO this is neither a title, nor the original name, i still have to figure out what is is
-                  //getMovieOriginalName(widget.movieData),
                   tagline,
                   style: const TextStyle(
                       fontWeight: FontWeight.bold, fontSize: 18),
@@ -129,34 +124,21 @@ class _MovieDetailsState extends State<MovieDetails> {
     return g.toString();
   }
 
-  ///This function return the release_date, or the first_air_date or empty
-  static String getReleaseDate(dynamic movieData) {
-    if (movieData['release_date'] == null) {
-      if (movieData['first_air_date'] == null) {
-      } else {
-        return movieData['first_air_date'].toString();
-      }
-    } else {
-      return movieData['release_date'].toString();
-    }
-    return '';
-  }
-
   /// Returns a formatted date String from [date].
   ///
   /// Throws a [FormatException] if the [date] can not be converted, or not a valid date data
   static String getFormattedDate(String date) {
-    try {
-      return DateFormat('dd/MM/yyyy').format(DateTime.parse(date));
-    } on FormatException {
-      return 'release date not provided';
-    }
+    return DateFormat('dd/MM/yyyy').format(DateTime.parse(date));
   }
 
   String getMovieTypes(List<dynamic> list) {
     String str = '';
     for (int x = 0; x < list.length; x++) {
-      str += '  ${getGenre(list[x])}';
+      String separator = '';
+      if (x != list.length - 1) {
+        separator = ',';
+      }
+      str += ' ${getGenre(list[x])}$separator';
     }
     return str;
   }
