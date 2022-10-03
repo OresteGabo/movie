@@ -3,12 +3,10 @@ import 'package:intl/intl.dart';
 import 'package:movie_app/model/app_vars.dart';
 
 class MovieDetails extends StatefulWidget {
-  final Map movieData;
-  final List genresMovies;
+  final int movieId;
   const MovieDetails({
     super.key,
-    required this.movieData,
-    required this.genresMovies,
+    required this.movieId,
   });
 
   @override
@@ -22,20 +20,18 @@ class _MovieDetailsState extends State<MovieDetails> {
   String _title = '';
   DateTime _release_date = DateTime.now();
   String _overview = '';
-  Widget _posterImage = Image.asset(
-    'lib/assets/default_poster_image.jpeg',
-    width: 130,
-  );
+  var _poster_path;
 
   var _genres; //Data from the API
   String _genresName = '';
+  var url;
 
   //String image;
   Map data = Map();
   void getMovieData() async {
-    data =
-        await tmdbWithCustomLogs.v3.movies.getDetails(widget.movieData['id']);
+    data = await tmdbWithCustomLogs.v3.movies.getDetails(widget.movieId);
     setState(() {
+      _poster_path = data['poster_path'];
       _runtime = data['runtime'];
       _tagline = data['tagline'];
       _displayedTime = getTime(_runtime);
@@ -44,12 +40,6 @@ class _MovieDetailsState extends State<MovieDetails> {
       _release_date = DateTime.parse(data['release_date']);
       _genres = data['genres'];
       _genresName = getGenres();
-
-      ///The image widget has to be loaded entirely before being displayed
-      _posterImage = Image.network(
-        'https://image.tmdb.org/t/p/w500${data['poster_path']}',
-        width: 130,
-      );
     });
   }
 
@@ -78,7 +68,16 @@ class _MovieDetailsState extends State<MovieDetails> {
               const SizedBox(
                 height: 12,
               ),
-              _posterImage,
+              _poster_path == null
+                  ? const SizedBox(
+                      //Dimensions of image (aspect ratio recommended by TMDB)
+                      width: 130,
+                      height: 130 * 1.5,
+                    )
+                  : Image.network(
+                      'https://image.tmdb.org/t/p/w500$_poster_path',
+                      width: 130,
+                    ),
             ],
           ),
           const SizedBox(
