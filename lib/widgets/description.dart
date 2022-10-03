@@ -2,10 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:movie_app/model/app_vars.dart';
 
-const String apikey = '04b719344104246bab9a7ee925a950ac';
-const String readaccesstoken =
-    'eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIwNGI3MTkzNDQxMDQyNDZiYWI5YTdlZTkyNWE5NTBhYyIsInN1YiI6IjYzMzM3YTE2NjA4MmViMDA4ODNlM2NlYyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.gcSE4SYndJ4cbpQWW9QMWbKJ80Ij0MNkr8XTsMPp5IY';
-
 class MovieDetails extends StatefulWidget {
   final Map movieData;
   final List genresMovies;
@@ -20,25 +16,46 @@ class MovieDetails extends StatefulWidget {
 }
 
 class _MovieDetailsState extends State<MovieDetails> {
-  int runtime = 0;
-  String tagline = '';
-  int hours = 0;
-  int minutes = 0;
+  int _runtime = 0;
+  String _tagline = '';
+  String _displayedTime = '';
+  String _title = '';
+  DateTime _release_date = DateTime.now();
+  String _overview = '';
+  Widget _posterImage = Image.asset(
+    'lib/assets/default_poster_image.jpeg',
+    width: 130,
+  );
 
-  void getMissingData() async {
-    Map data =
+  var _genres; //Data from the API
+  String _genresName = '';
+
+  //String image;
+  Map data = Map();
+  void getMovieData() async {
+    data =
         await tmdbWithCustomLogs.v3.movies.getDetails(widget.movieData['id']);
     setState(() {
-      runtime = data['runtime'];
-      tagline = data['tagline'];
-      hours = getHours(runtime);
-      minutes = getMinutes(runtime);
+      _runtime = data['runtime'];
+      _tagline = data['tagline'];
+      _displayedTime = getTime(_runtime);
+      _overview = data['overview'];
+      _title = data['title'];
+      _release_date = DateTime.parse(data['release_date']);
+      _genres = data['genres'];
+      _genresName = getGenres();
+
+      ///The image widget has to be loaded entirely before being displayed
+      _posterImage = Image.network(
+        'https://image.tmdb.org/t/p/w500${data['poster_path']}',
+        width: 130,
+      );
     });
   }
 
   @override
   void initState() {
-    getMissingData();
+    getMovieData();
     super.initState();
   }
 
@@ -55,16 +72,13 @@ class _MovieDetailsState extends State<MovieDetails> {
                 height: 20,
               ),
               Text(
-                getMovieTitle(widget.movieData),
+                _title,
                 style: const TextStyle(fontWeight: FontWeight.bold),
               ),
               const SizedBox(
                 height: 12,
               ),
-              Image.network(
-                'https://image.tmdb.org/t/p/w500${widget.movieData['poster_path']}',
-                width: 130,
-              ),
+              _posterImage,
             ],
           ),
           const SizedBox(
@@ -80,9 +94,9 @@ class _MovieDetailsState extends State<MovieDetails> {
             child: Column(
               children: [
                 Text(
-                  '${getFormattedDate(widget.movieData['release_date'])}   -  ${getTime(runtime)}',
+                  '${getFormattedDate(_release_date)}   -  $_displayedTime',
                 ),
-                Text(getMovieTypes(widget.movieData['genre_ids']))
+                Text(_genresName),
               ],
             ),
           ),
@@ -94,14 +108,14 @@ class _MovieDetailsState extends State<MovieDetails> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  tagline,
+                  _tagline,
                   style: const TextStyle(
                       fontWeight: FontWeight.bold, fontSize: 18),
                 ),
                 const SizedBox(
                   height: 24,
                 ),
-                Text(widget.movieData['overview'])
+                Text(_overview)
               ],
             ),
           ),
@@ -110,42 +124,26 @@ class _MovieDetailsState extends State<MovieDetails> {
     );
   }
 
-  ///This function will return the genre associated to the id passed inside the parameter
-  ///The id, can the a Tv Id or a Movie id
-  String getGenre(int g) {
-    for (int x = 0; x < widget.genresMovies.length; x++) {
-      Map m = widget.genresMovies[x];
-      if (m['id'] == g) {
-        return m['name'];
+  ///This function return the list of genre_names separated by a comma
+  ///This function can't be used immediately in the UI, because it has t finish its execution before being used
+  ///An intermediate variable is needed, that variable should get the value through initState
+  String getGenres() {
+    String str = '';
+    for (int x = 0; x < _genres.length; x++) {
+      String separator = '';
+      if (x != _genres.length - 1) {
+        separator = ',';
       }
+      str += ' ${_genres[x]['name']}$separator';
     }
-
-    //in case the String pair not found, we will return the id back
-    return g.toString();
+    return str;
   }
 
   /// Returns a formatted date String from [date].
   ///
   /// Throws a [FormatException] if the [date] can not be converted, or not a valid date data
-  static String getFormattedDate(String date) {
-    return DateFormat('dd/MM/yyyy').format(DateTime.parse(date));
-  }
-
-  String getMovieTypes(List<dynamic> list) {
-    String str = '';
-    for (int x = 0; x < list.length; x++) {
-      String separator = '';
-      if (x != list.length - 1) {
-        separator = ',';
-      }
-      str += ' ${getGenre(list[x])}$separator';
-    }
-    return str;
-  }
-
-  static String getMovieTitle(dynamic movieData) {
-    return movieData['title'] ??
-        (movieData['original_name'] ?? 'Title not provided');
+  static String getFormattedDate(DateTime date) {
+    return DateFormat('dd/MM/yyyy').format(date);
   }
 
   static int getHours(int m) {
@@ -157,6 +155,6 @@ class _MovieDetailsState extends State<MovieDetails> {
   }
 
   static String getTime(int m) {
-    return '${getHours(m)} h ${getMinutes(m)}';
+    return '${getHours(m)}h${getMinutes(m)}';
   }
 }
