@@ -33,44 +33,42 @@ class MovieCard extends StatelessWidget {
                   const SizedBox(
                     width: 6,
                   ),
-                  Container(
-                    padding: const EdgeInsets.only(top: 8),
-
-                    ///(Screen size - 110) This will help us to resize this container,
-                    ///so that text inside will know the right boundary
-                    width: width - 110,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        ///For some reason, some titles are null, and must be treated to not cause the app to crush
-                        Text(
-                          title,
-                          style: const TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold),
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 1,
-                        ),
-
-                        Text(
-                          getFrenchDate(
-                            DateTime.parse(releaseDate),
+                  Expanded(
+                    child: Container(
+                      padding: const EdgeInsets.only(top: 8),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ///For some reason, some titles are null, and must be treated to not cause the app to crush
+                          Text(
+                            title,
+                            style: const TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.bold),
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
                           ),
-                          style: const TextStyle(color: Colors.grey),
-                        ),
-                        const Spacer(),
-                        Text(
-                          ///Tesing if data exist before usage
-                          overview,
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 2,
-                          style: const TextStyle(
-                            fontSize: 16,
+
+                          Text(
+                            getFrenchDate(
+                              DateTime.parse(releaseDate),
+                            ),
+                            style: const TextStyle(color: Colors.grey),
                           ),
-                        ),
-                        const SizedBox(
-                          height: 6,
-                        ),
-                      ],
+                          const Spacer(),
+                          Text(
+                            ///Tesing if data exist before usage
+                            overview,
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 2,
+                            style: const TextStyle(
+                              fontSize: 16,
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 6,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ],
