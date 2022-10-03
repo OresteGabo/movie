@@ -8,12 +8,9 @@ class TrendingMovies extends StatelessWidget {
   ///for more on MediaType https://pub.dev/documentation/tmdb_api/latest/tmdb_api/MediaType.html
   final List movies;
 
-  final List genresMovies;
-
   const TrendingMovies({
     super.key,
     required this.movies,
-    required this.genresMovies,
   });
   @override
   Widget build(BuildContext context) {
@@ -28,8 +25,7 @@ class TrendingMovies extends StatelessWidget {
                 context,
                 MaterialPageRoute(
                   builder: (context) => MovieDetails(
-                    genresMovies: genresMovies,
-                    movieData: movies[index],
+                    movieId: movies[index]['id'],
                   ),
                 ),
               );

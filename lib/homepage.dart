@@ -36,8 +36,6 @@ class _MyHomePageState extends State<MyHomePage> {
     loadMovies();
   }
 
-  List genresMovies = [];
-
   loadMovies() async {
     TMDB tmdbWithCustomLogs = TMDB(
       defaultLanguage: 'fr',
@@ -61,25 +59,6 @@ class _MyHomePageState extends State<MyHomePage> {
     Map trendingresult = await tmdbWithCustomLogs.v3.trending
         .getTrending(mediaType: MediaType.movie);
 
-    /// Getting the genres of when MediaType is movie
-    /// It returns an Associative table (Map) named genres, with id and its associated name
-    /// sample example of the returned table
-    /// {
-    ///    "genres":[
-    ///       {
-    ///          "id":28,
-    ///          "name":"Action"
-    ///       },
-    ///       {
-    ///          "id":12,
-    ///          "name":"Aventure"
-    ///       }
-    ///    ]
-    /// }
-    Map genresResultsMovies = await tmdbWithCustomLogs.v3.genres.getMovieList();
-
-    genresMovies = genresResultsMovies['genres'] as List;
-
     setState(() {
       movies = trendingresult['results'];
     });
@@ -96,7 +75,6 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: TrendingMovies(
-        genresMovies: genresMovies,
         movies: movies,
       ),
     );
