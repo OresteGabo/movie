@@ -24,7 +24,6 @@ class _MovieDetailsState extends State<MovieDetails> {
 
   var _genres; //Data from the API
   String _genresName = '';
-  var url;
 
   //String image;
   Map data = Map();
@@ -56,68 +55,82 @@ class _MovieDetailsState extends State<MovieDetails> {
       body: ListView(
         children: [
           ///The title and the image
-          Column(
-            children: [
-              const SizedBox(
-                height: 20,
-              ),
-              Text(
-                _title,
-                style: const TextStyle(fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(
-                height: 12,
-              ),
-              _poster_path == null
-                  ? const SizedBox(
-                      //Dimensions of image (aspect ratio recommended by TMDB)
-                      width: 130,
-                      height: 130 * 1.5,
-                    )
-                  : Image.network(
-                      'https://image.tmdb.org/t/p/w500$_poster_path',
-                      width: 130,
-                    ),
-            ],
-          ),
+          _topTitledImage(),
           const SizedBox(
             height: 24,
           ),
 
           ///The release date, duration and the movie type
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: const BoxDecoration(
-              color: Colors.grey,
-            ),
-            child: Column(
-              children: [
-                Text(
-                  '${getFormattedDate(_release_date)}   -  $_displayedTime',
-                ),
-                Text(_genresName),
-              ],
-            ),
-          ),
+          _middleContainer(),
 
-          ///Short title, and the description in full
-          Container(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  _tagline,
-                  style: const TextStyle(
-                      fontWeight: FontWeight.bold, fontSize: 18),
-                ),
-                const SizedBox(
-                  height: 24,
-                ),
-                Text(_overview)
-              ],
-            ),
+          ///Tagline, and the overview in full
+          _movieDescription(),
+        ],
+      ),
+    );
+  }
+
+  ///The title and the image
+  Widget _topTitledImage() {
+    return Column(
+      children: [
+        const SizedBox(
+          height: 20,
+        ),
+        Text(
+          _title,
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(
+          height: 12,
+        ),
+        _poster_path == null
+            ? const SizedBox(
+                //Dimensions of image (aspect ratio recommended by TMDB)
+                width: 130,
+                height: 130 * 1.5,
+              )
+            : Image.network(
+                'https://image.tmdb.org/t/p/w500$_poster_path',
+                width: 130,
+              ),
+      ],
+    );
+  }
+
+  ///The release date, duration and the movie type
+  Widget _middleContainer() {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: const BoxDecoration(
+        color: Colors.grey,
+      ),
+      child: Column(
+        children: [
+          Text(
+            '${getFormattedDate(_release_date)}   -  $_displayedTime',
           ),
+          Text(_genresName),
+        ],
+      ),
+    );
+  }
+
+  ///Tagline, and the overview in full
+  Widget _movieDescription() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            _tagline,
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+          ),
+          const SizedBox(
+            height: 24,
+          ),
+          Text(_overview)
         ],
       ),
     );
@@ -125,7 +138,10 @@ class _MovieDetailsState extends State<MovieDetails> {
 
   ///This function return the list of genre_names separated by a comma
   ///This function can't be used immediately in the UI, because it has t finish its execution before being used
-  ///An intermediate variable is needed, that variable should get the value through initState
+  ///An intermediate variable is needed, that variable should get the value through initState,
+  ///Otherwise, the page will load before the existence of the data (null) and the display of
+  /// null will cause a red screen error , saying that it expected a String String but got a null,
+  /// it gets a null because genre.length is zero at first, and gets updated in initstate
   String getGenres() {
     String str = '';
     for (int x = 0; x < _genres.length; x++) {
