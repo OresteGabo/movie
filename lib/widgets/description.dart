@@ -14,11 +14,15 @@ class MovieDetails extends StatefulWidget {
 }
 
 class _MovieDetailsState extends State<MovieDetails> {
+  var release_dates;
+  var theatricalReleaseDate = DateTime.now();
+  Map release_dates_map = Map();
+
   int _runtime = 0;
   String _tagline = '';
   String _displayedTime = '';
   String _title = '';
-  DateTime _release_date = DateTime.now();
+  var originalReleaseDate; // = DateTime.now();
   String _overview = '';
   var _poster_path;
 
@@ -29,6 +33,8 @@ class _MovieDetailsState extends State<MovieDetails> {
   Map data = Map();
   void getMovieData() async {
     data = await tmdbWithCustomLogs.v3.movies.getDetails(widget.movieId);
+    release_dates_map =
+        await tmdbWithCustomLogs.v3.movies.getReleaseDates(widget.movieId);
     setState(() {
       _poster_path = data['poster_path'];
       _runtime = data['runtime'];
@@ -36,9 +42,11 @@ class _MovieDetailsState extends State<MovieDetails> {
       _displayedTime = getTime(_runtime);
       _overview = data['overview'];
       _title = data['title'];
-      _release_date = DateTime.parse(data['release_date']);
+      originalReleaseDate = DateTime.parse(data['release_date']);
       _genres = data['genres'];
       _genresName = getGenres();
+      release_dates = release_dates_map['results'];
+      theatricalReleaseDate = getTheatricalReleaseDate();
     });
   }
 
@@ -108,7 +116,7 @@ class _MovieDetailsState extends State<MovieDetails> {
       child: Column(
         children: [
           Text(
-            '${getFormattedDate(_release_date)}   -  $_displayedTime',
+            '${getFormattedDate(theatricalReleaseDate)}   -  $_displayedTime',
           ),
           Text(_genresName),
         ],
@@ -171,5 +179,23 @@ class _MovieDetailsState extends State<MovieDetails> {
 
   static String getTime(int m) {
     return '${getHours(m)}h${getMinutes(m)}';
+  }
+
+  DateTime getTheatricalReleaseDate() {
+    DateTime theatrical = originalReleaseDate;
+    for (int x = 0; x < release_dates.length; x++) {
+      if (release_dates[x]['iso_3166_1'] == 'FR') {
+        var frDates = release_dates[x]['release_dates'];
+        for (int y = 0; y < frDates.length; y++) {
+          ///type 3 == Theatrical (from  https://developers.themoviedb.org/3/movies/get-movie-release-dates)
+          if (frDates[y]['type'] == 3) {
+            theatrical = DateTime.parse(
+                (frDates[y]['release_date']).toString().substring(0, 10));
+            return theatrical;
+          }
+        }
+      }
+    }
+    return theatrical;
   }
 }
