@@ -31,10 +31,12 @@ class TrendingMovies extends StatelessWidget {
               );
             },
             child: MovieCard(
-              releaseDate: movies[index]['release_date'],
+              originalReleaseDate:
+                  DateTime.parse(movies[index]['release_date']),
               title: movies[index]['title'],
               posterPath: movies[index]['poster_path'],
               overview: movies[index]['overview'],
+              id: movies[index]['id'],
             ),
           );
         });
