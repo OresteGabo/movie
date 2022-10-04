@@ -36,7 +36,6 @@ class TrendingMovies extends StatelessWidget {
               title: movies[index]['title'],
               posterPath: movies[index]['poster_path'],
               overview: movies[index]['overview'],
-              id: movies[index]['id'],
             ),
           );
         });
