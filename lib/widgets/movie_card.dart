@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 class MovieCard extends StatelessWidget {
-  final int id;
   final DateTime originalReleaseDate;
   final String posterPath;
   final String title;
@@ -9,7 +8,6 @@ class MovieCard extends StatelessWidget {
 
   const MovieCard({
     super.key,
-    required this.id,
     required this.originalReleaseDate,
     required this.posterPath,
     required this.title,
