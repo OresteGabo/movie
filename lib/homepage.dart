@@ -36,16 +36,8 @@ class _MyHomePageState extends State<MyHomePage> {
     loadMovies();
   }
 
+  
   loadMovies() async {
-    TMDB tmdbWithCustomLogs = TMDB(
-      defaultLanguage: 'fr',
-      ApiKeys(apikey, readaccesstoken),
-      logConfig: const ConfigLogger(
-        showLogs: true,
-        showErrorLogs: true,
-      ),
-    );
-
     /*
       Trending has a mediaType set to all (MediaType.all), i teams the data may concerns Tv shows, and or movies and persons
 
