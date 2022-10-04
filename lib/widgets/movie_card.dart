@@ -1,46 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:movie_app/model/app_vars.dart';
 
-class MovieCard extends StatefulWidget {
+class MovieCard extends StatelessWidget {
   final int id;
   final DateTime originalReleaseDate;
   final String posterPath;
   final String title;
   final String overview;
 
-  MovieCard({
+  const MovieCard({
+    super.key,
     required this.id,
     required this.originalReleaseDate,
     required this.posterPath,
     required this.title,
     required this.overview,
   });
-
-  @override
-  State<MovieCard> createState() => _MovieCardState();
-}
-
-class _MovieCardState extends State<MovieCard> {
-  var release_dates;
-  var theatricalReleaseDate = DateTime.now();
-  Map release_dates_map = Map();
-
-  void loadData() async {
-    release_dates_map =
-        await tmdbWithCustomLogs.v3.movies.getReleaseDates(widget.id);
-
-    setState(() {
-      release_dates = release_dates_map['results'];
-      theatricalReleaseDate = getTheatricalReleaseDate();
-    });
-  }
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    loadData();
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +27,7 @@ class _MovieCardState extends State<MovieCard> {
           child: Row(
             children: [
               Image.network(
-                'https://image.tmdb.org/t/p/w500${widget.posterPath}',
+                'https://image.tmdb.org/t/p/w500$posterPath',
               ),
               Expanded(
                 child: Padding(
@@ -75,14 +49,14 @@ class _MovieCardState extends State<MovieCard> {
       children: [
         ///The title should be displayed on one line, otherwise, the ellipsis (...) are shown
         Text(
-          widget.title,
+          title,
           style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           overflow: TextOverflow.ellipsis,
           maxLines: 1,
         ),
         Text(
           getFrenchDate(
-            theatricalReleaseDate,
+            originalReleaseDate,
           ),
           style: const TextStyle(color: Colors.grey),
         ),
@@ -90,7 +64,7 @@ class _MovieCardState extends State<MovieCard> {
 
         ///The overview is only show on 2 lines, and the rest is replaced by (...)
         Text(
-          widget.overview,
+          overview,
           overflow: TextOverflow.ellipsis,
           maxLines: 2,
           style: const TextStyle(
@@ -177,23 +151,5 @@ class _MovieCardState extends State<MovieCard> {
         break;
     }
     return frM;
-  }
-
-  DateTime getTheatricalReleaseDate() {
-    DateTime theatrical = widget.originalReleaseDate;
-    for (int x = 0; x < release_dates.length; x++) {
-      if (release_dates[x]['iso_3166_1'] == 'FR') {
-        var frDates = release_dates[x]['release_dates'];
-        for (int y = 0; y < frDates.length; y++) {
-          ///type 3 == Theatrical (from  https://developers.themoviedb.org/3/movies/get-movie-release-dates)
-          if (frDates[y]['type'] == 3) {
-            theatrical = DateTime.parse(
-                (frDates[y]['release_date']).toString().substring(0, 10));
-            return theatrical;
-          }
-        }
-      }
-    }
-    return theatrical;
   }
 }
